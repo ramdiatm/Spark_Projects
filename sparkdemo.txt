@@ -1,0 +1,21 @@
+//import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+ //port org.apache.spark.sql.hive.HiveContext
+ import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.types._
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.functions._
+import sqlContext.implicits._ 
+//import org.apache.spark.sql.expressions.Window
+//import org.apache.spark.sql.functions.row_number
+//val df=data1.toDF("weight","name")
+val schema=StructType(List(StructField("weight",DoubleType,true),StructField("name",StringType,true)))
+
+val df1=spark.createDataFrame(sc.parallelize(data),schema)
+//df1.withColumnRenamed("weight","weight2").show()
+val df2=df1.withColumn("weight2",df1("weight")*5)
+//df2.withColumn("index_col",monotonicallyIncreasingId).show
+
+df2.withColumn("pawan",row_number() over(Window.partitionBy("weight") orderBy("name"))).where("pawan<1").show()
+//sc.parallelize(data2).toDF.show()
+//df1.show(false)
